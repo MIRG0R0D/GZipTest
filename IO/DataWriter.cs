@@ -10,7 +10,7 @@ namespace GZipTest
     public class DataWriter : IWriter<Block>
     {
 
-        private Dictionary<int, Block> dictToWrite;
+        private Dictionary<int, Block> dictToWrite; 
         private BinaryWriter outputStream;
         private static object locker = new object();
         int position;
