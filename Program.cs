@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 
@@ -7,15 +8,24 @@ namespace GZipTest
 {
     class Program
     {
+
+        private const int DEFAULT_BLOCK_SIZE = 5242880; //5 MB
+
         private static string sourceFile, targetFile;
+        private static int threadCount, blockSize;
         private static CompressionMode compressionMode;
         public static int Main(string[] args)
         {
 #if DEBUG
-            args = new string[] { CompressionMode.Compress.ToString(), "D://testPDF.pdf", "D://testUncompressed.mft" };//MyFileType
+            //compression
+            args = new string[] { CompressionMode.Compress.ToString(), "D://testHuge.pdf", "D://testCompressed.mft" };//mft = MyFileType
+            //decompression
+            //args = new string[] { CompressionMode.Decompress.ToString(), "D://testCompressed.mft" , "D://testDecompress.pdf"};
 #endif
             try
             {
+                blockSize = DEFAULT_BLOCK_SIZE;
+                threadCount = Environment.ProcessorCount;
                 checkInputs(args);
             }
             catch (Exception e)
@@ -24,25 +34,42 @@ namespace GZipTest
                 return 1;
             }
 
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             try
             {
                 using (Stream inputStream = new FileStream(sourceFile, FileMode.Open))
                 using (Stream outputStream = new FileStream(targetFile, FileMode.Create))
                 {
-                    ZipWorker zipWorker = new ZipWorker(compressionMode, new BinaryReader(inputStream), new BinaryWriter(outputStream));
+                    ZipWorker zipWorker = new ZipWorker(compressionMode, new BinaryReader(inputStream), new BinaryWriter(outputStream), blockSize, threadCount);
                     return zipWorker.RunZipWorker();
                 }
+            }
+            catch (OutOfMemoryException outMemory)
+            {
+                Console.WriteLine($"OutOfMemoryException: try to reduce block size (the 4-th parameter). Now it's {blockSize}");
+                Console.WriteLine(outMemory.ToString());
+                return 1;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
                 return 1;
             }
+            finally
+            {
+                stopwatch.Stop();
+#if DEBUG
+                Console.WriteLine($"Done in {stopwatch.Elapsed} seconds;");
+                Console.WriteLine("Press any key to exit");
+                Console.ReadKey();
+#endif
+            }
         }
 
         private static void checkInputs(string[] args)
         {
-            if (args.Length != 3)
+            if (args.Length < 3)
             {
                 throw new ArgumentException("Invalid Arguments count");
             }
@@ -71,6 +98,15 @@ namespace GZipTest
             catch
             {
                 throw new ArgumentException($"Invalid output file name {args[2]}");
+            }
+
+            if (args.Length >= 4)
+            {
+                if (int.TryParse(args[3], out int block) && block > 0)
+                {
+                    blockSize = block;
+                }
+                else throw new ArgumentException($"Invalid block size {args[3]}");
             }
         }
     }

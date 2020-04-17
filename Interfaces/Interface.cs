@@ -7,13 +7,12 @@ namespace GZipTest
 {
     public interface IReader<T>
     {
-        T ReadData();
+        bool ReadData(out T result);
     }
 
     public interface IWriter<T>
     {
         void WriteData(T data);
-        void CompleteAdding();
     }
 
     public interface IWorker<Tinput, Toutput>

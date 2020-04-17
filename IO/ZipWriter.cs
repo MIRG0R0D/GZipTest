@@ -8,24 +8,23 @@ namespace GZipTest
 {
     public class ZipWriter : IWriter<Block>
     {
-        private BlockingCollection<Block> outputQueue = new BlockingCollection<Block>();
         private BinaryWriter outputStream;
+        
+        private static object locker = new object();
         public ZipWriter(BinaryWriter outputStream)
         {
             if (outputStream == null) throw new ArgumentNullException("Target stream is null");
             this.outputStream = outputStream;
         }
 
-        public void CompleteAdding()
-        {
-            outputQueue.CompleteAdding();
-        }
-
         public void WriteData(Block data)
         {
-            outputStream.Write(data.Number);
-            outputStream.Write(data.Data.Length);
-            outputStream.Write(data.Data);
+            lock (locker)
+            {
+                outputStream.Write(data.Number);
+                outputStream.Write(data.Data.Length);
+                outputStream.Write(data.Data);
+            }
         }
     }
 }

@@ -43,17 +43,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Block.cs" />
-    <Compile Include="GZip.cs" />
+    <Compile Include="Helpers\Block.cs" />
+    <Compile Include="Helpers\ThreadSafeCollection.cs" />
+    <Compile Include="Workers\GZip.cs" />
     <Compile Include="Interfaces\Interface.cs" />
+    <Compile Include="IO\DataWriter.cs" />
+    <Compile Include="IO\Factory.cs" />
+    <Compile Include="IO\ZipRead.cs" />
     <Compile Include="Main\ZipWorker.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Workers\Compressor.cs" />
-    <Compile Include="Workers\DataRead.cs" />
+    <Compile Include="IO\DataRead.cs" />
     <Compile Include="Workers\Decompressor.cs" />
     <Compile Include="Workers\Transformer.cs" />
-    <Compile Include="Workers\ZipWriter.cs" />
+    <Compile Include="IO\ZipWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

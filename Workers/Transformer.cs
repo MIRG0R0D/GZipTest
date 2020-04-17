@@ -11,26 +11,25 @@ namespace GZipTest
 {
     public class Transformer<TInput, TOutput>
     {
-        private IWorker<Block, Block> worker;
-        BlockingCollection<Block> inputQueue = new BlockingCollection<Block>();
-        //
-        private readonly List<Thread> threads = new List<Thread>();
-        private int threadsCount = 4;
-        private IWriter<Block> writer;
+        private readonly int DEFAULT_THREAD_COUNT = 4;
 
-        public Transformer(CompressionMode compressionMode, IWriter<Block> writer)
+        private IWorker<Block, Block> worker;
+        private readonly int threadsCount;
+        ThreadSafeCollection inputQueue = new ThreadSafeCollection();
+        private Thread[] threads ;
+        private IWriter<Block> writer;
+        private CancellationToken cancellationToken;
+        private CancellationTokenSource completeToken;
+
+        public Transformer(CompressionMode compressionMode, IWriter<Block> writer, CancellationToken cancellationToken, int threadsCount)
         {
-            switch (compressionMode)
-            {
-                case CompressionMode.Compress:
-                    worker = new Compressor();
-                    break;
-                case CompressionMode.Decompress:
-                    worker = new Decompressor();
-                    break;
-                default: throw new ArgumentException("unknown compression mode");
-            }
+            worker = WorkerFactory.GetWorker(compressionMode);
             this.writer = writer;
+            this.cancellationToken = cancellationToken;
+            this.completeToken = new CancellationTokenSource();
+            
+            this.threadsCount = threadsCount <= 0 ? DEFAULT_THREAD_COUNT : threadsCount;
+
             Init();
         }
 
@@ -40,49 +39,50 @@ namespace GZipTest
         }
         public void CompleteAdding()
         {
-            inputQueue.CompleteAdding();
+            completeToken.Cancel();
+            while (true)
+            {
+                if (!threads.Any(x => x.IsAlive))
+                {
+                    return;
+                }
+            }
         }
-
-        public void ConnectWriter(IWriter<Block> writer)
-        {
-
-        }
-
 
         private void Init()
         {
+            List<Thread> threadsList = new List<Thread>();
             for(int i = 0; i < threadsCount; i++)
             {
                 Thread myThread = new Thread(threadFunc);
-                myThread.Name = $"thread_{i}";
-                threads.Add(myThread);                
+                myThread.Name = $"thread_transformer_{i}";
+                threadsList.Add(myThread);                
                 myThread.Start();
             }
-        }
-
-        private void threadFinished()
-        {
-            if (threads.All(x => !x.IsAlive))
-            {
-                writer.CompleteAdding();
-            }
+            threads = threadsList.ToArray();
         }
 
         private  void threadFunc()
         {
-            Console.WriteLine($"Worker {Thread.CurrentThread.Name} is starting.");
-
-            foreach (Block workItem in inputQueue.GetConsumingEnumerable())
+            //Console.WriteLine($"Worker {Thread.CurrentThread.Name} is starting.");
+            while (true)
             {
-                Console.WriteLine($"Worker {Thread.CurrentThread.Name} is processing item { workItem.Number}");
-                Block processedBlock = worker.Work(workItem);
-                writer.WriteData(processedBlock);
+                if (inputQueue.TryTake(out Block block))
+                {
+                    //Console.WriteLine($"Worker {Thread.CurrentThread.Name} is processing item { block.Number}");
+                    Block processedBlock = worker.Work(block);
+                    writer.WriteData(processedBlock);
+                }
+                else
+                {
+                    if (completeToken.IsCancellationRequested || cancellationToken.IsCancellationRequested)
+                    {
+                        //Console.WriteLine($"Worker {Thread.CurrentThread.Name} is stopping.");
+                        return;
+                    }
+                    continue;
+                }
             }
-            Console.WriteLine($"Worker {Thread.CurrentThread.Name} is stopping.");
         }
-
-
-
-
     }
 }
