@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GZipTest
+﻿namespace GZipTest
 {
     public interface IReader<T>
     {

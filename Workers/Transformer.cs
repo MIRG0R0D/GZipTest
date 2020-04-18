@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO.Compression;
-using System.Linq;
-using System.Text;
+﻿using System.IO.Compression;
 using System.Threading;
 
 namespace GZipTest
@@ -15,7 +9,7 @@ namespace GZipTest
 
         private IWorker<Block, Block> worker;
         private readonly int threadsCount;
-        ThreadSafeCollection inputQueue = new ThreadSafeCollection();
+        ThreadSafeCollection<Block> inputQueue = new ThreadSafeCollection<Block>();
         private Thread[] threads ;
         private IWriter<Block> writer;
         private CancellationToken cancellationToken;
@@ -24,10 +18,9 @@ namespace GZipTest
         public Transformer(CompressionMode compressionMode, IWriter<Block> writer, CancellationToken cancellationToken, int threadsCount)
         {
             worker = WorkerFactory.GetWorker(compressionMode);
+            completeToken = new CancellationTokenSource();            
             this.writer = writer;
             this.cancellationToken = cancellationToken;
-            this.completeToken = new CancellationTokenSource();
-            
             this.threadsCount = threadsCount <= 0 ? DEFAULT_THREAD_COUNT : threadsCount;
 
             InitThreads();
@@ -40,27 +33,23 @@ namespace GZipTest
         public void CompleteAdding()
         {
             completeToken.Cancel();
-            while (true)
+            foreach(Thread thread in threads)
             {
-                if (!threads.Any(x => x.IsAlive))
-                {
-                    return;
-                }
+                thread.Join();
             }
+            return;
         }
 
         private void InitThreads()
         {
-            List<Thread> threadsList = new List<Thread>();
+            threads = new Thread[threadsCount];
             for(int i = 0; i < threadsCount; i++)
             {
-                Thread myThread = new Thread(threadFunc);
-                myThread.Name = $"thread_transformer_{i}";
-                threadsList.Add(myThread);                
-                myThread.Start();
+                Thread tempThread = new Thread(threadFunc);
+                tempThread.Name = $"thread_transformer_{i}";
+                tempThread.Start();
+                threads[i] = tempThread;
             }
-            threads = threadsList.ToArray();
-            
         }
 
         private  void threadFunc()

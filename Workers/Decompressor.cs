@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GZipTest
 {
-    class Decompressor : IWorker <Block, Block>
+    public class Decompressor : IWorker <Block, Block>
     {
         public Block Work(Block inputData)
         {

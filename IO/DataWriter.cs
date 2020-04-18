@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GZipTest
 {
@@ -13,7 +10,7 @@ namespace GZipTest
         private Dictionary<int, Block> dictToWrite; 
         private BinaryWriter outputStream;
         private static object locker = new object();
-        int position;
+        private int position;
 
         public DataWriter(BinaryWriter outputStream)
         {

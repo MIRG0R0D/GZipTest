@@ -1,24 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace GZipTest
 {
-    public class ThreadSafeCollection
+    public class ThreadSafeCollection <T>
     {
-        private Queue<Block> queue = new Queue<Block>();
+        private Queue<T> queue = new Queue<T>();
         private object locker = new object();
 
-        public void Add(Block block)
+        public void Add(T block)
         {
             lock (locker)
             {
                 queue.Enqueue(block);
             }
         }
-        public bool TryTake (out Block block)
+        public bool TryTake (out T block)
         {
             lock (locker)
             {
@@ -29,7 +25,7 @@ namespace GZipTest
                 }
                 else
                 {
-                    block = null;
+                    block = default(T);
                     return false;
                 }
             }
