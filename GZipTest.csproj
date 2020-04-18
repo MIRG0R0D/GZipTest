@@ -45,8 +45,10 @@
   <ItemGroup>
     <Compile Include="Helpers\Block.cs" />
     <Compile Include="Helpers\ThreadSafeCollection.cs" />
+    <Compile Include="Interfaces\IReader.cs" />
+    <Compile Include="Interfaces\IWorker.cs" />
+    <Compile Include="Interfaces\IWriter.cs" />
     <Compile Include="Workers\GZip.cs" />
-    <Compile Include="Interfaces\Interface.cs" />
     <Compile Include="IO\DataWriter.cs" />
     <Compile Include="Helpers\Factory.cs" />
     <Compile Include="IO\ZipRead.cs" />
