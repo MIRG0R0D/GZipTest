@@ -17,9 +17,9 @@ namespace GZipTest
         {
 #if DEBUG
             //compression
-            //args = new string[] { CompressionMode.Compress.ToString(), "D://testHuge.pdf", "D://testCompressed.mft", "1024", "10" };//mft = MyFileType
+            args = new string[] { CompressionMode.Compress.ToString(), "D://testHuge.pdf", "D://testCompressed.mft", "1024", "10" };//mft = MyFileType
             //decompression
-            args = new string[] { CompressionMode.Decompress.ToString(), "D://testCompressed.mft" , "D://testDecompress.pdf"};
+            //args = new string[] { CompressionMode.Decompress.ToString(), "D://testCompressed.mft" , "D://testDecompress.pdf"};
 #endif
             try
             {
