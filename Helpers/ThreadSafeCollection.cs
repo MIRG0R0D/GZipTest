@@ -9,7 +9,7 @@ namespace GZipTest
     public class ThreadSafeCollection
     {
         private Queue<Block> queue = new Queue<Block>();
-        private static object locker = new object();
+        private object locker = new object();
 
         public void Add(Block block)
         {

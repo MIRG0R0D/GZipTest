@@ -48,7 +48,7 @@
     <Compile Include="Workers\GZip.cs" />
     <Compile Include="Interfaces\Interface.cs" />
     <Compile Include="IO\DataWriter.cs" />
-    <Compile Include="IO\Factory.cs" />
+    <Compile Include="Helpers\Factory.cs" />
     <Compile Include="IO\ZipRead.cs" />
     <Compile Include="Main\ZipWorker.cs" />
     <Compile Include="Program.cs" />

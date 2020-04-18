@@ -47,7 +47,9 @@ namespace GZipTest
             }
             catch (OutOfMemoryException outMemory)
             {
-                Console.WriteLine($"OutOfMemoryException: try to reduce block size (the 4-th parameter). Now it's {blockSize}");
+                Console.WriteLine($"OutOfMemoryException: try to reduce block size (the 4-th parameter) or thread count (the 5-th).");
+                Console.WriteLine($"Current block size is:   {blockSize}");
+                Console.WriteLine($"Current thread count is: {threadCount}");
                 Console.WriteLine(outMemory.ToString());
                 return 1;
             }
@@ -107,6 +109,14 @@ namespace GZipTest
                     blockSize = block;
                 }
                 else throw new ArgumentException($"Invalid block size {args[3]}");
+            }
+            if (args.Length >= 5)
+            {
+                if (int.TryParse(args[4], out int threadC) && threadC> 0)
+                {
+                    threadCount = threadC;
+                }
+                else throw new ArgumentException($"Invalid thread count {args[4]}");
             }
         }
     }

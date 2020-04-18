@@ -30,7 +30,7 @@ namespace GZipTest
             
             this.threadsCount = threadsCount <= 0 ? DEFAULT_THREAD_COUNT : threadsCount;
 
-            Init();
+            InitThreads();
         }
 
         public void Push(Block data)
@@ -49,7 +49,7 @@ namespace GZipTest
             }
         }
 
-        private void Init()
+        private void InitThreads()
         {
             List<Thread> threadsList = new List<Thread>();
             for(int i = 0; i < threadsCount; i++)
@@ -60,6 +60,7 @@ namespace GZipTest
                 myThread.Start();
             }
             threads = threadsList.ToArray();
+            
         }
 
         private  void threadFunc()
