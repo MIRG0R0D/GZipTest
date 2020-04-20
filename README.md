@@ -10,7 +10,7 @@ On success program return 0, otherwise 1.
 
 Additional command line arguments:
 * GZipTest.exe compress [original file name] [archive file name] [block size] [thread count]
-Default block size is 1 MB, default thread count equals processor count
+Default block size is 1048576 B, default thread count equals processor count
 
 ## Implemented strategies: 
 *  DataRead : IReader - reads blocks from the input stream.
