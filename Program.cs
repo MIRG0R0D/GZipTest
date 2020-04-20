@@ -8,7 +8,7 @@ namespace GZipTest
     class Program
     {
 
-        private const int DEFAULT_BLOCK_SIZE = 5242880; //5 MB
+        private const int DEFAULT_BLOCK_SIZE = 1048576; //1 MB
 
         private static string sourceFile, targetFile;
         private static int threadCount, blockSize;

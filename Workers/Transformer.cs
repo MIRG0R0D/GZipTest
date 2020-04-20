@@ -15,6 +15,9 @@ namespace GZipTest
         private CancellationToken cancellationToken;
         private CancellationTokenSource completeToken;
 
+        public int QueueCount { get { return inputQueue.Count; } }
+        public int ThreadCount { get { return threadsCount; } }
+
         public Transformer(CompressionMode compressionMode, IWriter<Block> writer, CancellationToken cancellationToken, int threadsCount)
         {
             worker = WorkerFactory.GetWorker(compressionMode);
@@ -54,23 +57,19 @@ namespace GZipTest
 
         private  void threadFunc()
         {
-            //Console.WriteLine($"Worker {Thread.CurrentThread.Name} is starting.");
             while (true)
             {
                 if (inputQueue.TryTake(out Block block))
                 {
-                    //Console.WriteLine($"Worker {Thread.CurrentThread.Name} is processing item { block.Number}");
                     Block processedBlock = worker.Work(block);
                     writer.WriteData(processedBlock);
                 }
                 else
                 {
                     if (completeToken.IsCancellationRequested || cancellationToken.IsCancellationRequested)
-                    {
-                        //Console.WriteLine($"Worker {Thread.CurrentThread.Name} is stopping.");
                         return;
-                    }
-                    continue;
+                    else 
+                        continue;
                 }
             }
         }

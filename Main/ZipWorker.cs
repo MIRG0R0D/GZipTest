@@ -9,7 +9,7 @@ namespace GZipTest
     {
         private IReader <Block> dataReader;
         private Transformer<Block, Block> transformer;
-        private IWriter<Block> writer;
+        private IWriter<Block> dataWriter;
         private CancellationTokenSource cancellationTokenSource;
         private CancellationToken cancellationToken;
         public ZipWorker(CompressionMode compressionMode, BinaryReader sourceStream, BinaryWriter targetStream, int blockSize, int threadCount)
@@ -21,8 +21,8 @@ namespace GZipTest
             cancellationToken = cancellationTokenSource.Token;
             
             dataReader = ReaderFactory.GetReader(compressionMode, sourceStream, blockSize);
-            writer = WriterFactory.GetWriter(compressionMode, targetStream);
-            transformer = new Transformer<Block, Block>(compressionMode, writer, cancellationToken, threadCount);
+            dataWriter = WriterFactory.GetWriter(compressionMode, targetStream);
+            transformer = new Transformer<Block, Block>(compressionMode, dataWriter, cancellationToken, threadCount);
         }
         public int RunZipWorker()
         {
@@ -30,6 +30,7 @@ namespace GZipTest
             {
                 while (true)
                 {
+                    if (transformer.QueueCount > transformer.ThreadCount) continue;
                     if (!dataReader.ReadData(out Block dataBlock))
                     {
                         transformer.CompleteAdding();

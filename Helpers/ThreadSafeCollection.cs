@@ -7,6 +7,8 @@ namespace GZipTest
         private Queue<T> queue = new Queue<T>();
         private object locker = new object();
 
+        public int Count { get { return queue.Count; } }
+
         public void Add(T block)
         {
             lock (locker)
