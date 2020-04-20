@@ -8,7 +8,7 @@ On success program return 0, otherwise 1.
 * compressing: GZipTest.exe compress [original file name] [archive file name]
 * decompressing: GZipTest.exe decompress [archive file name] [decompressing file name]
 
-## Additional command line arguments:
+###Additional command line arguments:
 * GZipTest.exe compress [original file name] [archive file name] [block size] [thread count]
 Default block size is 1 MB, default thread count equals processor count
 
