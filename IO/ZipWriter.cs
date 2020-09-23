@@ -12,6 +12,7 @@ namespace GZipTest
         {
             if (outputStream == null) throw new ArgumentNullException("Target stream is null");
             this.outputStream = outputStream;
+            outputStream.Write("MyFileType format; ©Mirg0r0d");
         }
 
         public void WriteData(Block data)

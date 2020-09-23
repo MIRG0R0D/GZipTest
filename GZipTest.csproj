@@ -58,6 +58,7 @@
     <Compile Include="Workers\Compressor.cs" />
     <Compile Include="IO\DataRead.cs" />
     <Compile Include="Workers\Decompressor.cs" />
+    <Compile Include="Workers\MyThreadPool.cs" />
     <Compile Include="Workers\Transformer.cs" />
     <Compile Include="IO\ZipWriter.cs" />
   </ItemGroup>

@@ -11,8 +11,13 @@ namespace GZipTest
         public ZipRead(BinaryReader inputStream)
         {
             this.inputStream = inputStream;
+            if (!checkFileHeader()) throw new FileLoadException("File header corrupted or missing");
+            
         }
-
+        private bool checkFileHeader()
+        {
+            return inputStream.ReadString().Contains("MyFileType");
+        }
         public bool ReadData(out Block block)
         {
             if (inputStream.BaseStream.Position != inputStream.BaseStream.Length)

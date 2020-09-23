@@ -21,6 +21,14 @@ Default block size is 1048576 B, default thread count equals processor count
 *  Transformer - creates threads to process blocks from inputQueue and pass them to writer
 *  Gzip - process byte array by compressing / decompressing with GZipStream 
 *  ZipWorker - creates instances of reader, writer and transformer. Read blocks from reader and passing them to transformer
+*  MyThreadPool - threads controller (create/delete threads)
+
+
+
+- было бы не плохо использовать пул элементов block, чтобы избежать лишнего выделения памяти на каждой итерации работы приложения
+- DONE нужен класс (thread pool), который будет отвечать за создание/удалени/переиспользование потоков
+- DONE приложение падает с Unhandled exception если указать на распаковку файл, который не был сформирован приложением
+- DONE в zipworker неверно передавать стримы, datareader/datawriter нужно было создать выше
 
 
 
