@@ -27,6 +27,12 @@ namespace GZipTest
 
             transformer = new Transformer<Block, Block>(compressionMode, dataWriter, cancellationToken, this.threadsCount);
         }
+
+        /// <summary>
+        /// major func
+        /// reads data from dataReader and push it to transformer
+        /// </summary>
+        /// <returns>0 if success</returns>
         public int RunZipWorker()
         {
             try

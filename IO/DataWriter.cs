@@ -7,7 +7,7 @@ namespace GZipTest
     public class DataWriter : IWriter<Block>
     {
 
-        private Dictionary<int, Block> dictToWrite; 
+        private Dictionary<int, byte[]> dictToWrite; 
         private BinaryWriter outputStream;
         private static object locker = new object();
         private int position;
@@ -16,10 +16,14 @@ namespace GZipTest
         {
             if (outputStream == null) throw new ArgumentNullException("Target stream is null");
             this.outputStream = outputStream;
-            dictToWrite = new Dictionary<int, Block>();
+            dictToWrite = new Dictionary<int, byte[]>();
             position = 0;
         }
 
+        /// <summary>
+        /// writing decompressed data to file
+        /// </summary>
+        /// <param name="data">decompressed data</param>
         public void WriteData(Block data)
         {
             lock (locker)
@@ -29,13 +33,14 @@ namespace GZipTest
                     throw new Exception($"Duplicate key to write {data.Number}");
                 }
 
-                dictToWrite.Add(data.Number, data);
+                dictToWrite.Add(data.Number, data.Data);
 
                 while (dictToWrite.ContainsKey(position))
                 {
-                    outputStream.Write(dictToWrite[position].Data);
+                    outputStream.Write(dictToWrite[position]);
                     dictToWrite.Remove(position++);
                 }
+                BlockPool.ReturnObject(data);
             }
         }
     }

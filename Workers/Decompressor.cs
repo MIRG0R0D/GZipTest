@@ -4,10 +4,16 @@ namespace GZipTest
 {
     public class Decompressor : IWorker <Block, Block>
     {
-        public Block Work(Block inputData)
+        /// <summary>
+        /// decompressing data with GZip
+        /// </summary>
+        /// <param name="dataBlock">Compressed data</param>
+        /// <returns>original data</returns>
+        public Block Work(Block dataBlock)
         {
-            if (inputData == null) throw new ArgumentNullException("input data is null");
-            return new Block(inputData.Number, GZip.Decompress(inputData.Data));
+            if (dataBlock == null) throw new ArgumentNullException("input data is null");
+            dataBlock.Data = GZip.Decompress(dataBlock.Data);
+            return dataBlock; 
         }
     }
 }

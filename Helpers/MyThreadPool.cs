@@ -43,13 +43,13 @@ namespace GZipTest
             threads = new Thread[threadsCount];
             for (int i = 0; i < threadsCount; i++)
             {
-                Thread tempThread = new Thread(threadFunc);
+                Thread tempThread = new Thread(ThreadFunc);
                 tempThread.Name = $"thread_transformer_{i}";
                 tempThread.Start();
                 threads[i] = tempThread;
             }
         }
-        private void threadFunc()
+        private void ThreadFunc()
         {
             while (true)
             {

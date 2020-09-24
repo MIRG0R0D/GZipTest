@@ -2,15 +2,24 @@
 
 namespace GZipTest
 {
+    
     public class Block
     {
         public int Number;
         public byte[] Data;
 
-        public Block(int number, byte[] data)
+        public Block()
         {
-            Number = number;
-            Data = data;
+            Reset();
+        }
+
+        /// <summary>
+        /// setting the block to default state
+        /// </summary>
+        public void Reset()
+        {
+            Number = -1;
+            Data = null;
         }
         public override bool Equals(object obj)
         {
@@ -26,5 +35,6 @@ namespace GZipTest
             hashCode = hashCode * -1521134295 + EqualityComparer<byte[]>.Default.GetHashCode(Data);
             return hashCode;
         }
+
     }
 }

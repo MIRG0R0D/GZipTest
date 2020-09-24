@@ -11,24 +11,36 @@ namespace GZipTest
         public ZipRead(BinaryReader inputStream)
         {
             this.inputStream = inputStream;
-            if (!checkFileHeader()) throw new FileLoadException("File header corrupted or missing");
+            if (!IsFileHeaderCorrect()) throw new FileLoadException("File header corrupted or missing");
             
         }
-        private bool checkFileHeader()
+
+        /// <summary>
+        /// check for file header correctness
+        /// </summary>
+        /// <returns>tru if correct</returns>
+        private bool IsFileHeaderCorrect()
         {
             return inputStream.ReadString().Contains("MyFileType");
         }
+
+        /// <summary>
+        /// read block of compressed data
+        /// </summary>
+        /// <param name="block">compressed data</param>
+        /// <returns>true if success</returns>
         public bool ReadData(out Block block)
         {
             if (inputStream.BaseStream.Position != inputStream.BaseStream.Length)
             {
                 try
                 {
-                    int blockNumber = inputStream.ReadInt32();
+                    block = BlockPool.GetBlock();
+                    block.Number = inputStream.ReadInt32();
                     int blockSize = inputStream.ReadInt32();
-                    byte[] buffer = inputStream.ReadBytes(blockSize);
-                    //todo compare blockSize vs buffer length
-                    block = new Block(blockNumber, buffer);
+                    block.Data = inputStream.ReadBytes(blockSize);
+
+                    //if (block.Data.Length != blockSize) throw new Exception("data block length doesn't match");
                     return true;
                 }
                 catch (Exception e)

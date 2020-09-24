@@ -8,7 +8,7 @@ namespace GZipTest
     class Program
     {
 
-        private const int DEFAULT_BLOCK_SIZE = 1048576; //1 MB
+        private const int DEFAULT_BLOCK_SIZE = 1048576; //1 MB;
 
         private static string sourceFile, targetFile;
         private static int threadCount, blockSize;
@@ -17,16 +17,16 @@ namespace GZipTest
         {
 #if DEBUG
             //compression
-            //args = new string[] { CompressionMode.Compress.ToString(), "D://testHuge.pdf", "D://testCompressed.mft"};//mft = MyFileType
+            args = new string[] { CompressionMode.Compress.ToString(), "D://testHuge.pdf", "D://testCompressed.mft"};//mft = MyFileType
             //decompression
-            args = new string[] { CompressionMode.Decompress.ToString(), "D://testCompressed.mft" , "D://testDecompress.pdf"};
+            //args = new string[] { CompressionMode.Decompress.ToString(), "D://testCompressed.mft" , "D://testDecompress.pdf"};
             
 #endif
             try
             {
                 blockSize = DEFAULT_BLOCK_SIZE;
                 threadCount = Environment.ProcessorCount;
-                checkInputs(args);
+                CheckInputs(args);
             }
             catch (Exception e)
             {
@@ -77,13 +77,19 @@ namespace GZipTest
                 stopwatch.Stop();
 #if DEBUG
                 Console.WriteLine($"Done in {stopwatch.Elapsed} seconds;");
+                Console.WriteLine($"Block: Created - {BlockPool.Created}, "
+                                         +$"Returned - {BlockPool.Returned}, "
+                                         +$"Reusing - {BlockPool.Reusing};");
                 Console.WriteLine("Press any key to exit");
                 Console.ReadKey();
 #endif
             }
         }
-
-        private static void checkInputs(string[] args)
+        /// <summary>
+        /// Checking the correctness of input data
+        /// </summary>
+        /// <param name="args"></param>
+        private static void CheckInputs(string[] args)
         {
             if (args.Length < 3)
             {

@@ -15,6 +15,10 @@ namespace GZipTest
             outputStream.Write("MyFileType format; ©Mirg0r0d");
         }
 
+        /// <summary>
+        /// write compressed data to stream
+        /// </summary>
+        /// <param name="data">compressed data</param>
         public void WriteData(Block data)
         {
             lock (locker)
@@ -23,6 +27,7 @@ namespace GZipTest
                 outputStream.Write(data.Data.Length);
                 outputStream.Write(data.Data);
             }
+            BlockPool.ReturnObject(data);
         }
     }
 }

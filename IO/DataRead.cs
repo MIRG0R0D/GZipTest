@@ -18,12 +18,18 @@ namespace GZipTest
             this.blockSize = blockSize;
         }
 
+        /// <summary>
+        /// read original data from input stream
+        /// </summary>
+        /// <param name="block">data converted to block</param>
+        /// <returns>true if success</returns>
         public bool ReadData(out Block block)
         {
             if (inputStream.BaseStream.Position != inputStream.BaseStream.Length)
             {
-                byte[] buffer = inputStream.ReadBytes(blockSize);
-                block = new Block(counter++, buffer);
+                block = BlockPool.GetBlock();
+                block.Data = inputStream.ReadBytes(blockSize);
+                block.Number = counter++;
                 return true;
             }
             else
